@@ -1,0 +1,25 @@
+default menu.c32
+prompt 0
+timeout 300
+ONTIMEOUT local
+
+menu title ########## PXE Boot Menu ##########
+
+label 1
+menu label ^1) Install CentOS 7 x64 with Local Repo
+kernel centos7/vmlinuz
+append initrd=centos7/initrd.img method=ftp://10.0.0.1/pub devfs=nomount
+
+label 2
+menu label ^2) Install CentOS 7 x64 with http://mirror.centos.org Repo
+kernel centos7/vmlinuz
+append initrd=centos7/initrd.img method=http://mirror.centos.org/centos/7/os/x86_64/ devfs=nomount ip=dhcp
+
+label 3
+menu label ^3) Install CentOS 7 x64 with Local Repo using VNC
+kernel centos7/vmlinuz
+append  initrd=centos7/initrd.img method=ftp://10.0.0.1/pub devfs=nomount inst.vnc inst.vncpassword={{ vncpass }}
+
+label 4
+menu label ^4) Boot from local drive
+
