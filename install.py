@@ -73,10 +73,10 @@ def variables():
     global netcardcount
     netcardcount = run('cat /proc/net/dev | egrep -v \'Inter|face|lo\' | cut -f1 -d\':\' | wc -l')
 
-servicelist = ['dnsmasq', 'vsftpd', 'network', 'firewalld']
+servicelist = ['dnsmasq', 'vsftpd', 'network', 'firewalld', 'ntpd']
 
 commands = ['yum update -y; yum -y install epel-release',
-         'yum -y install net-tools bind-utils nload iftop wget git htop',
+         'yum -y install net-tools bind-utils nload iftop wget git htop tcpdump ntpdate ntp',
          'yum -y install dnsmasq syslinux tftp-server vsftpd',
          'cp -r /usr/share/syslinux/* /var/lib/tftpboot',
          'mv /etc/dnsmasq.conf /etc/dnsmasq.conf.backup',
@@ -85,7 +85,8 @@ commands = ['yum update -y; yum -y install epel-release',
          'mkdir /var/lib/tftpboot/centos7',
          'cp /mnt/images/pxeboot/vmlinuz /var/lib/tftpboot/centos7; cp /mnt/images/pxeboot/initrd.img /var/lib/tftpboot/centos7',
          'cp -r /mnt/* /var/ftp/pub/; chmod -R 755 /var/ftp/pub',
-         'umount /mnt']
+         'umount /mnt',
+         'ntpdate 0.asia.pool.ntp.org']
 
 def prints():
     print('Please '+enter+' name of internal and external network card names!!!')
@@ -139,7 +140,7 @@ def natconfiger(intiface, extiface):
     run('firewall-cmd --complete-reload')
     run('firewall-cmd --zone=external --add-masquerade --permanent')
     run('firewall-cmd --permanent --direct --passthrough ipv4 -t nat -I POSTROUTING -o '+extiface+' -j MASQUERADE -s 10.0.0.0/24')
-    run('firewall-cmd --permanent --zone=internal --add-service={dhcp,tftp,dns,http,https,nfs,ssh,ftp,vnc-server}')
+    run('firewall-cmd --permanent --zone=internal --add-service={dhcp,tftp,dns,http,https,nfs,ntp,ssh,ftp,vnc-server}')
     run('firewall-cmd --permanent --zone=internal --add-port={69/udp,4011/udp}')
     #firewall-cmd --get-active-zones
     #firewall-cmd --list-all
